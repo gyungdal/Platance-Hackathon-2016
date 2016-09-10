@@ -8,6 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import sun.rmi.runtime.Log;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -18,7 +19,8 @@ import java.net.URL;
  */
 public class GetDistance extends Thread {
     private static final String GET_DISTANCE_REQUEST = "http://map.naver.com/spirra/findCarRoute.nhn?route=route3&output=json&coord_type=naver&search=0&car=0&mileage=12.4&";
-    private static final String GET_LOCATE_REQUEST_FORMAT = "http://maps.google.com/maps/api/geocode/json?address=%s&sensor=false";
+    private static final String GET_LOCATE_REQUEST_FORMAT = "https://maps.google.com/maps/api/geocode/json?address=%s&sensor=false&key=%s";
+    private static final String API_KEY = "AIzaSyBbE-0753fKTRgWXG4vwWJKomWEnHdCn-w";
     //private static final String GET_LOCATE_REQUEST_FORMAT = "https://apis.daum.net/local/geo/addr2coord?apikey=952d7bd3b757ddb384711627fbd29538&q=%s&output=json&appid=com.codezero.fireprevention";
     private String sp;
     private String ep;
@@ -69,10 +71,10 @@ public class GetDistance extends Thread {
     }
 
     private String get(String name) throws IOException {
-        System.out.println(String.format(GET_LOCATE_REQUEST_FORMAT, name).replaceAll(" ", "%20"));
-        URL url = new URL(String.format(GET_LOCATE_REQUEST_FORMAT, name).replaceAll(" ", "%20"));
+        System.out.println(String.format(GET_LOCATE_REQUEST_FORMAT, name, API_KEY).replaceAll(" ", "%20"));
+        URL url = new URL(String.format(GET_LOCATE_REQUEST_FORMAT, name, API_KEY).replaceAll(" ", "%20"));
         url.openConnection();
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setDoInput(true);
         conn.connect();
