@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * Created by GyungDal on 2016-09-10.
@@ -22,6 +23,10 @@ public class GetDistance extends Thread {
     private static final String GET_LOCATE_REQUEST_FORMAT = "https://maps.google.com/maps/api/geocode/json?address=%s&sensor=false&key=%s";
     private static final String API_KEY = "AIzaSyBbE-0753fKTRgWXG4vwWJKomWEnHdCn-w";
     //private static final String GET_LOCATE_REQUEST_FORMAT = "https://apis.daum.net/local/geo/addr2coord?apikey=952d7bd3b757ddb384711627fbd29538&q=%s&output=json&appid=com.codezero.fireprevention";
+    private static HashMap<String, Item> hash;
+    static {
+        hash = new HashMap<>();
+    }
     private String sp;
     private String ep;
     private long result = -999;
@@ -63,7 +68,6 @@ public class GetDistance extends Thread {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(temp);
             System.out.println("Done");
             result = Long.valueOf(((JSONObject)jsonObject.get("summary")).get("totalDistance").toString());
-            //System.out.println(result);
 
         }catch(Exception e){
             System.err.println(e.getMessage());
@@ -90,6 +94,9 @@ public class GetDistance extends Thread {
         return temp;
     }
     private Item getLocate(String name) throws Exception{
+        if(hash.get(name) != null){
+            return hash.get(name);
+        }
         String temp = get(name);
         System.out.println(temp.toString());
         while(temp.contains("OVER_QUERY_LIMIT")){
@@ -97,6 +104,7 @@ public class GetDistance extends Thread {
             temp = get(name);
         }
         Item item = getPoint(temp);
+        hash.put(name, item);
         System.out.println(temp);
         System.out.println(item.lng);
         System.out.println(item.lat);
