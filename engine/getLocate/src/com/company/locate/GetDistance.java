@@ -23,7 +23,7 @@ public class GetDistance extends Thread {
     private static final String GET_LOCATE_REQUEST_FORMAT = "https://maps.google.com/maps/api/geocode/json?address=%s&sensor=false&key=%s";
     private static final String API_KEY = "AIzaSyBbE-0753fKTRgWXG4vwWJKomWEnHdCn-w";
     //private static final String GET_LOCATE_REQUEST_FORMAT = "https://apis.daum.net/local/geo/addr2coord?apikey=952d7bd3b757ddb384711627fbd29538&q=%s&output=json&appid=com.codezero.fireprevention";
-    private static HashMap<String, Item> hash;
+    public static HashMap<String, Item> hash;
     static {
         hash = new HashMap<>();
     }
@@ -49,7 +49,7 @@ public class GetDistance extends Thread {
             Item epLocate = getLocate(ep);
             String requesetURL = GET_DISTANCE_REQUEST + String.format("start=%f,%f,%s&destination=%f,%f,%s&via="
                     , spLocate.lat, spLocate.lng, sp, epLocate.lat, epLocate.lng, ep).replaceAll(",","%2C").replaceAll(" ", "%20");
-            System.out.println(requesetURL);
+            //System.out.println(requesetURL);
             URL url = new URL(requesetURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -62,11 +62,11 @@ public class GetDistance extends Thread {
                 temp += inputLine;
             }
             in.close();
-            System.out.println(temp.toString());
+            //System.out.println(temp.toString());
 
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(temp);
-            System.out.println("Done");
+            //System.out.println("Done");
             result = Long.valueOf(((JSONObject)jsonObject.get("summary")).get("totalDistance").toString());
 
         }catch(Exception e){
@@ -75,7 +75,7 @@ public class GetDistance extends Thread {
     }
 
     private String get(String name) throws IOException {
-        System.out.println(String.format(GET_LOCATE_REQUEST_FORMAT, name, API_KEY).replaceAll(" ", "%20"));
+        //System.out.println(String.format(GET_LOCATE_REQUEST_FORMAT, name, API_KEY).replaceAll(" ", "%20"));
         URL url = new URL(String.format(GET_LOCATE_REQUEST_FORMAT, name, API_KEY).replaceAll(" ", "%20"));
         url.openConnection();
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
@@ -98,16 +98,16 @@ public class GetDistance extends Thread {
             return hash.get(name);
         }
         String temp = get(name);
-        System.out.println(temp.toString());
+        //System.out.println(temp.toString());
         while(temp.contains("OVER_QUERY_LIMIT")){
             this.sleep(100);
             temp = get(name);
         }
         Item item = getPoint(temp);
         hash.put(name, item);
-        System.out.println(temp);
-        System.out.println(item.lng);
-        System.out.println(item.lat);
+        //System.out.println(temp);
+        //System.out.println(item.lng);
+        //System.out.println(item.lat);
         return item;
     }
     private Item getPoint(String temp) throws InterruptedException {
